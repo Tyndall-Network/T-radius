@@ -15,6 +15,6 @@ echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.networkradius.com.asc
 
 # Update APT database & install packages
 sudo apt-get update
-sudo apt-get install freeradius
+sudo apt-get install freeradius -y
 
 # Check out networkradius(https://networkradius.com/packages/#fr32) for other distros and OS's.
