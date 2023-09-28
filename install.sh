@@ -18,3 +18,28 @@ sudo apt-get update
 sudo apt-get install freeradius -y
 
 # Check out networkradius(https://networkradius.com/packages/#fr32) for other distros and OS's.
+
+
+## Install mysql-server
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BROWN='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+sudo apt install mysql-server
+echo -e "${BROWN}Warning: ${BLUE}This script runs mysql_secure_installation that requires interactive user input${NC}\n\tSelect No to skip."
+
+echo -e "${GREEN}Do you want to run the mysql_secure_installation script? "
+select yn in "Yes" "No"; do
+  case "$yn" in
+    Yes ) echo -e "\t\t\t${BROWN}WARNING!!\n\t${RED}\tPlease set a new password.${NC}";
+      # set temporary root password
+      mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password123!'";
+      sudo mysql_secure_installation;
+      read -rp "Enter your new root password: " pass
+      mysql -u root -p"$pass" -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket"
+      break;;
+    No ) echo "..skipping..";
+      exit;;
+  esac
+done
