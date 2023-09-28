@@ -43,3 +43,11 @@ select yn in "Yes" "No"; do
       exit;;
   esac
 done
+
+
+## Set up Radius database
+read -rp "Enter radius user password: " radpass
+# mysql -e "CREATE DATABASE radius; GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY '$radpass'"
+sed -i '10,$ s/radpass/'"$radpass"'/' /etc/freeradius/mods-config/sql/main/mysql/setup.sql
+mysql < /etc/freeradius/mods-config/sql/main/mysql/setup.sql
+mysql radius < /etc/freeradius/mods-config/sql/main/mysql/schema.sql
