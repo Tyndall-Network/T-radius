@@ -57,5 +57,13 @@ sed -i 's/dialect = "sqlite"/dialect = "mysql"/' /etc/freeradius/mods-available/
 sed -i '/driver = "rlm_sql_null"/s/^/#/' /etc/freeradius/mods-available/sql #comment line containing 'rlm_sql_null'
 sed -i '^#.* "rlm_sql_${dialect}"/s/^#//' /etc/freeradius/mods-available/sql #uncomment line containing 'rlm_sql_${dialect}'
 sed -i -e '^#.* = "localhost"/s/^#//' -e '^#.*port = 3306/s/^#//' -e '^#.*login =/s/^#//' -e '^#.*password =/s/^#//' /etc/freeradius/mods-available/sql
+# Enable SQL module
+ln -s /etc/freeradius/mods-available/sql /etc/freeradius/mods-enabled/sql
+sed -i '^#[\t]sql/s/^#//' /etc/freeradius/sites-available/default /etc/freeradius/sites-available/inner-tunnel #Uncomment sql in all sections
+sudo freeradius -XC #Check configuration is correct
 
+## Populate SQL for test users
+#user entry
+mysql -e "INSERT INTO radius.radcheck (username, attribute, op, value) VALUES('Tyndall', 'Cleartext-Password', ':=', 'Tyndall')"
+#user groups
 
