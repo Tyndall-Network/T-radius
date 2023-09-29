@@ -46,8 +46,16 @@ done
 
 
 ## Set up Radius database
+mysql -e "CREATE DATABASE radius"
 read -rp "Enter radius user password: " radpass
-# mysql -e "CREATE DATABASE radius; GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY '$radpass'"
-sed -i '10,$ s/radpass/'"$radpass"'/' /etc/freeradius/mods-config/sql/main/mysql/setup.sql
-mysql < /etc/freeradius/mods-config/sql/main/mysql/setup.sql
 mysql radius < /etc/freeradius/mods-config/sql/main/mysql/schema.sql
+# mysql -e "CREATE DATABASE radius; GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY '$radpass'"
+sed -i '10,$ s/radpass/'"$radpass"'/' /etc/freeradius/mods-config/sql/main/mysql/setup.sql /etc/freeradius/mods-available/sql
+mysql radius < /etc/freeradius/mods-config/sql/main/mysql/setup.sql
+# Change dialect to mysql
+sed -i 's/dialect = "sqlite"/dialect = "mysql"/' /etc/freeradius/mods-available/sql
+sed -i '/driver = "rlm_sql_null"/s/^/#/' /etc/freeradius/mods-available/sql #comment line containing 'rlm_sql_null'
+sed -i '^#.* "rlm_sql_${dialect}"/s/^#//' /etc/freeradius/mods-available/sql #uncomment line containing 'rlm_sql_${dialect}'
+sed -i -e '^#.* = "localhost"/s/^#//' -e '^#.*port = 3306/s/^#//' -e '^#.*login =/s/^#//' -e '^#.*password =/s/^#//' /etc/freeradius/mods-available/sql
+
+
