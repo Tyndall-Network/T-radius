@@ -29,17 +29,17 @@ BROWN='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 sudo apt install mysql-server -y
-echo -e "${BROWN}Warning: ${BLUE}This script runs mysql_secure_installation that requires interactive user input${NC}\n\tSelect No to skip."
+echo -e "${BROWN}Warning: ${BLUE}This script runs mysql_secure_installation${NC}\n\tSelect No to skip."
 
 echo -e "${GREEN}Do you want to run the mysql_secure_installation script? "
 select yn in "Yes" "No"; do
   case "$yn" in
     Yes ) echo -e "\t\t\t${BROWN}WARNING!!\n\t${RED}\tPlease set a new password.${NC}";
       # set temporary root password
-      mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password123!'";
+      # mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password123!'";
       sudo mysql_secure_installation;
-      read -rp "Enter your new root password: " pass
-      mysql -u root -p"$pass" -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket"
+      # read -rp "Enter your new root password: " pass
+      # mysql -u root -p"$pass" -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket"
       break;;
     No ) echo "..skipping..";
       exit;;
@@ -48,12 +48,12 @@ done
 
 
 ## Set up Radius database
-mysql -e "CREATE DATABASE radius"
+sudo mysql -e "CREATE DATABASE radius"
 read -rp "Enter radius user password: " radpass
-mysql radius < /etc/freeradius/mods-config/sql/main/mysql/schema.sql
+sudo cat /etc/freeradius/mods-config/sql/main/mysql/schema.sql | mysql radius
 # mysql -e "CREATE DATABASE radius; GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY '$radpass'"
 sed -i '10,$ s/radpass/'"$radpass"'/' /etc/freeradius/mods-config/sql/main/mysql/setup.sql /etc/freeradius/mods-available/sql
-mysql radius < /etc/freeradius/mods-config/sql/main/mysql/setup.sql
+sudo cat /etc/freeradius/mods-config/sql/main/mysql/setup.sql | mysql radius
 # Change dialect to mysql
 sed -i 's/dialect = "sqlite"/dialect = "mysql"/' /etc/freeradius/mods-available/sql
 sed -i '/driver = "rlm_sql_null"/s/^/#/' /etc/freeradius/mods-available/sql #comment line containing 'rlm_sql_null'
@@ -66,6 +66,6 @@ sudo freeradius -XC #Check configuration is correct
 
 ## Populate SQL for test users
 #user entry
-mysql -e "INSERT INTO radius.radcheck (username, attribute, op, value) VALUES('Tyndall', 'Cleartext-Password', ':=', 'Tyndall')"
+sudo mysql -e "INSERT INTO radius.radcheck (username, attribute, op, value) VALUES('Tyndall', 'Cleartext-Password', ':=', 'Tyndall')"
 #user groups
 
