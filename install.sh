@@ -1,4 +1,6 @@
 #!/bin/bash
+# Install curl
+sudo apt install curl -y
 # Install freeradius on ubuntu jammy-- 22.04
 # Add NetworkRadius[https://networkradius.com/packages/] PGP key
 install -d -o root -g root -m 0755 /etc/apt/keyrings
@@ -26,7 +28,7 @@ GREEN='\033[0;32m'
 BROWN='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
-sudo apt install mysql-server
+sudo apt install mysql-server -y
 echo -e "${BROWN}Warning: ${BLUE}This script runs mysql_secure_installation that requires interactive user input${NC}\n\tSelect No to skip."
 
 echo -e "${GREEN}Do you want to run the mysql_secure_installation script? "
