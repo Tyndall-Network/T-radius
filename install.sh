@@ -50,18 +50,18 @@ done
 ## Set up Radius database
 sudo mysql -e "CREATE DATABASE radius"
 read -rp "Enter radius user password: " radpass
-sudo cat /etc/freeradius/mods-config/sql/main/mysql/schema.sql | mysql radius
+sudo cat /etc/freeradius/mods-config/sql/main/mysql/schema.sql | sudo mysql radius
 # mysql -e "CREATE DATABASE radius; GRANT ALL ON radius.* TO 'radius'@'localhost' IDENTIFIED BY '$radpass'"
-sed -i '10,$ s/radpass/'"$radpass"'/' /etc/freeradius/mods-config/sql/main/mysql/setup.sql /etc/freeradius/mods-available/sql
-sudo cat /etc/freeradius/mods-config/sql/main/mysql/setup.sql | mysql radius
+sudo sed -i '10,$ s/radpass/'"$radpass"'/' /etc/freeradius/mods-config/sql/main/mysql/setup.sql /etc/freeradius/mods-available/sql
+sudo cat /etc/freeradius/mods-config/sql/main/mysql/setup.sql | sudo mysql radius
 # Change dialect to mysql
-sed -i 's/dialect = "sqlite"/dialect = "mysql"/' /etc/freeradius/mods-available/sql
-sed -i '/driver = "rlm_sql_null"/s/^/#/' /etc/freeradius/mods-available/sql #comment line containing 'rlm_sql_null'
-sed -i '^#.* "rlm_sql_${dialect}"/s/^#//' /etc/freeradius/mods-available/sql #uncomment line containing 'rlm_sql_${dialect}'
-sed -i -e '^#.* = "localhost"/s/^#//' -e '^#.*port = 3306/s/^#//' -e '^#.*login =/s/^#//' -e '^#.*password =/s/^#//' /etc/freeradius/mods-available/sql
+sudo sed -i 's/dialect = "sqlite"/dialect = "mysql"/' /etc/freeradius/mods-available/sql
+sudo sed -i '/driver = "rlm_sql_null"/s/^/#/' /etc/freeradius/mods-available/sql #comment line containing 'rlm_sql_null'
+sudo sed -i '^#.* "rlm_sql_${dialect}"/s/^#//' /etc/freeradius/mods-available/sql #uncomment line containing 'rlm_sql_${dialect}'
+sudo sed -i -e '^#.* = "localhost"/s/^#//' -e '^#.*port = 3306/s/^#//' -e '^#.*login =/s/^#//' -e '^#.*password =/s/^#//' /etc/freeradius/mods-available/sql
 # Enable SQL module
-ln -s /etc/freeradius/mods-available/sql /etc/freeradius/mods-enabled/sql
-sed -i '^#[\t]sql/s/^#//' /etc/freeradius/sites-available/default /etc/freeradius/sites-available/inner-tunnel #Uncomment sql in all sections
+sudo ln -s /etc/freeradius/mods-available/sql /etc/freeradius/mods-enabled/sql
+sudo sed -i '^#[\t]sql/s/^#//' /etc/freeradius/sites-available/default /etc/freeradius/sites-available/inner-tunnel #Uncomment sql in all sections
 sudo freeradius -XC #Check configuration is correct
 
 ## Populate SQL for test users
