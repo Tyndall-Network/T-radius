@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # @Bram
     'users',
     'plans',
+    'nas',
 ]
 
 MIDDLEWARE = [

@@ -11,5 +11,5 @@ class User(models.Model):
     phone = models.CharField(max_length=16)
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

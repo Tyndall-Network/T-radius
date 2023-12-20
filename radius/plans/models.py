@@ -17,7 +17,8 @@ class Plan(models.Model):
     DAILY = "dl"
     WEEKLY = "wk"
     MONTHLY = "mn"
-    id = models.IntegerField(primary_key=True)
+    # Use default django primary key format
+    # id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=20)
     download = models.IntegerField(default=0)
     upload = models.IntegerField(default=0)
